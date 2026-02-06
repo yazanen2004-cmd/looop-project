@@ -26,11 +26,10 @@ export default function HomePage() {
   // حالات الحجز المحدثة
   const [selectedBike, setSelectedBike] = useState<any>(null);
   const [selectedDate, setSelectedDate] = useState(""); 
-  const [customerName, setCustomerName] = useState(""); // حالة اسم المستلم الجديدة
+  const [customerName, setCustomerName] = useState(""); 
   const [availableSlots, setAvailableSlots] = useState<string[]>([]);
   const [bookedSlots, setBookedSlots] = useState<any[]>([]);
 
-  // جلب الحجوزات بناءً على التاريخ المختار للفلترة
   const fetchBookingsForDate = async (date: string, bikeId: number) => {
     if (!date || !bikeId) return;
     const { data } = await supabase
@@ -72,7 +71,7 @@ export default function HomePage() {
   const handleConfirmBooking = async (slot: string) => {
     if (!user) return alert("سجل دخولك أولاً لتبدأ الحجز");
     if (!selectedDate) return alert("يرجى اختيار التاريخ أولاً");
-    if (!customerName.trim()) return alert("يرجى إدخال اسم المستلم لتثبيت الحجز"); // التحقق من الاسم
+    if (!customerName.trim()) return alert("يرجى إدخال اسم المستلم لتثبيت الحجز");
 
     setLoading(true);
     try {
@@ -81,14 +80,14 @@ export default function HomePage() {
         user_id: user.id,
         reserved_time: slot,
         booking_date: selectedDate,
-        customer_name: customerName // إرسال الاسم لقاعدة البيانات
+        customer_name: customerName 
       }]);
 
       if (error) throw error;
       alert(`تم حجز موعد ${slot} باسم (${customerName}) بنجاح! 🚲`);
       setIsModalOpen(false);
       setSelectedDate("");
-      setCustomerName(""); // تصفير الاسم بعد النجاح
+      setCustomerName(""); 
     } catch (e: any) { alert("خطأ في الحجز"); } finally { setLoading(false); }
   };
 
@@ -141,28 +140,34 @@ export default function HomePage() {
         </Link>
       </nav>
 
-      {/* 2. Slider Section */}
+      {/* 2. Slider Section - تم تعديل الارتفاع ليكون متجاوباً */}
       <section className="px-4 md:px-8 pt-10 max-w-7xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white bg-white">
           {ads.length > 0 ? (
-            <Swiper modules={[Autoplay, Pagination, EffectFade]} effect={'fade'} pagination={{ clickable: true }} autoplay={{ delay: 5000 }} style={{ height: '650px' }} className="w-full">
+            <Swiper 
+              modules={[Autoplay, Pagination, EffectFade]} 
+              effect={'fade'} 
+              pagination={{ clickable: true }} 
+              autoplay={{ delay: 5000 }} 
+              className="w-full h-[300px] md:h-[500px] lg:h-[650px]" // تعديل ارتفاع السلايدر حسب الشاشة
+            >
               {ads.map((ad) => (
                 <SwiperSlide key={ad.id}>
                   <div className="relative w-full h-full text-right">
                     <img src={ad.image_url} alt={ad.title} className="w-full h-full object-cover object-center" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent flex items-end p-12">
-                      <h2 className="text-white text-3xl md:text-7xl font-black drop-shadow-2xl mb-8">{ad.title}</h2>
+                      <h2 className="text-white text-2xl md:text-7xl font-black drop-shadow-2xl mb-8">{ad.title}</h2>
                     </div>
                   </div>
                 </SwiperSlide>
               ))}
             </Swiper>
-          ) : <div className="h-[650px] flex items-center justify-center bg-sky-50 text-sky-400 font-bold animate-pulse italic">جاري تحميل العروض... 🚲</div>}
+          ) : <div className="h-[300px] md:h-[650px] flex items-center justify-center bg-sky-50 text-sky-400 font-bold animate-pulse italic">جاري تحميل العروض... 🚲</div>}
         </motion.div>
       </section>
 
-      {/* 3. About Section */}
-      <section className="py-24 px-6 md:px-8 max-w-7xl mx-auto overflow-hidden">
+      {/* 3. About Section - تم تعديل ارتفاع الصورة ليكون متجاوباً */}
+      <section className="py-24 px-6 md:px-8 max-w-7xl mx-auto overflow-hidden text-black">
         <div className="mb-10 text-right">
           <div className="inline-block bg-sky-100 text-sky-600 px-5 py-2 rounded-full text-xs font-black tracking-widest border border-sky-200">مرحباً بكم في لووب 🚲</div>
         </div>
@@ -173,13 +178,14 @@ export default function HomePage() {
                 <div className="flex flex-col md:flex-row items-center gap-12 md:gap-24 pb-16">
                   <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="w-full md:w-1/2 relative group">
                     <div className="absolute -inset-2 bg-gradient-to-r from-sky-400 to-indigo-400 rounded-[3rem] blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-                    <div className="relative rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white bg-white w-full h-[550px]"> 
+                    {/* تعديل الارتفاع للصورة التعريفية */}
+                    <div className="relative rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white bg-white w-full h-[300px] md:h-[450px] lg:h-[550px]"> 
                       <img src={slide.image_url} alt={slide.title} className="w-full h-full object-cover object-center" />
                     </div>
                   </motion.div>
                   <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="w-full md:w-1/2 text-right space-y-10 px-6 md:px-12">
                     <div className="space-y-4">
-                      <h2 className="text-5xl md:text-8xl font-black text-slate-900 leading-[1.1] pb-2">{slide.title}</h2>
+                      <h2 className="text-4xl md:text-8xl font-black text-slate-900 leading-[1.1] pb-2">{slide.title}</h2>
                       <div className="w-32 h-2.5 bg-sky-500 rounded-full shadow-lg shadow-sky-200"></div>
                     </div>
                     <p className="text-xl md:text-3xl text-slate-500 font-medium leading-relaxed italic border-r-8 border-slate-100 pr-8 text-black">{slide.description}</p>
@@ -219,24 +225,23 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row gap-8 items-center text-white">
             {contactData ? (
               <>
-                <div className="flex items-center gap-3 bg-slate-800/50 px-5 py-2.5 rounded-2xl border border-slate-700"><span className="text-sky-300 font-black text-sm">{contactData.phone} 📞</span></div>
-                <div className="flex items-center gap-3 bg-slate-800/50 px-5 py-2.5 rounded-2xl border border-slate-700"><span className="text-sky-300 font-black text-sm">{contactData.email} ✉️</span></div>
+                <div className="flex items-center gap-3 bg-slate-800/50 px-5 py-2.5 rounded-2xl border border-slate-700 text-white"><span className="text-sky-300 font-black text-sm">{contactData.phone} 📞</span></div>
+                <div className="flex items-center gap-3 bg-slate-800/50 px-5 py-2.5 rounded-2xl border border-slate-700 text-white"><span className="text-sky-300 font-black text-sm">{contactData.email} ✉️</span></div>
               </>
             ) : <span className="text-slate-400 font-bold italic animate-pulse">جاري تحميل بيانات الدعم...</span>}
           </div>
-          <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest text-white">جميع الحقوق محفوظة &copy; 2026</div>
+          <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest text-white italic">جميع الحقوق محفوظة &copy; 2026</div>
         </div>
       </footer>
 
-      {/* Modal الحجز المطور مع حقل الاسم */}
+      {/* Modal الحجز المطور */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xl flex items-center justify-center p-4 z-[100] transition-all">
-          <motion.div initial={{ opacity: 0, scale: 0.8, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} className="bg-white rounded-[3.5rem] p-8 md:p-12 max-w-md w-full shadow-2xl text-right border-4 border-white">
+          <motion.div initial={{ opacity: 0, scale: 0.8, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} className="bg-white rounded-[3.5rem] p-6 md:p-12 max-w-md w-full shadow-2xl text-right border-4 border-white">
             <div className="text-5xl mb-4 text-center">🚲</div>
             <h2 className="text-2xl font-black text-slate-900 mb-6 text-center">حجز {selectedBike?.name}</h2>
             
             <div className="space-y-5">
-              {/* حقل الاسم الجديد */}
               <div className="space-y-2">
                 <label className="block text-sm font-black text-sky-600 pr-2">اسم صاحب الحجز (المستلم):</label>
                 <input 
@@ -261,10 +266,10 @@ export default function HomePage() {
               </div>
             </div>
 
-            {selectedDate && customerName.trim() && ( // يظهر الوقت فقط بعد إدخال الاسم والتاريخ
+            {selectedDate && customerName.trim() && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-6">
                 <p className="text-slate-400 font-bold text-xs mb-4 text-center italic">اختر وقت البداية لليوم ({selectedDate})</p>
-                <div className="grid grid-cols-3 gap-3 max-h-48 overflow-y-auto p-2 no-scrollbar" dir="rtl">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-48 overflow-y-auto p-2 no-scrollbar" dir="rtl">
                   {availableSlots.map((slot) => {
                     const isBooked = bookedSlots.includes(slot);
                     let isPast = false;
@@ -282,7 +287,7 @@ export default function HomePage() {
                       <button 
                         key={slot} 
                         disabled={loading || isBooked || isPast} 
-                        className={`py-4 rounded-2xl text-xs font-black transition-all active:scale-90 shadow-sm border-2 
+                        className={`py-4 rounded-2xl text-[10px] md:text-xs font-black transition-all active:scale-90 shadow-sm border-2 
                           ${(isBooked || isPast) 
                             ? 'bg-slate-100 border-slate-100 text-slate-300 cursor-not-allowed' 
                             : 'bg-white border-slate-100 text-slate-600 hover:bg-sky-500 hover:text-white hover:border-sky-400'}`} 
